@@ -6,15 +6,10 @@
     <title>ADMIN PANNEL</title>
 
     <link rel="shortcut icon" href="/static/Images/Favicon/Top.png" type="image/x-icon">
-    
-    <!-- Updated Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Remix Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.min.css" rel="stylesheet">
     
     <style>
-        /* Scrollbar Styling */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -32,7 +27,6 @@
             background: #4338ca;
         }
 
-        /* Table styles */
         .table-container {
             height: calc(100vh - 120px);
         }
@@ -53,18 +47,15 @@
             border: 1px solid #374151;
         }
 
-        /* Remove all border-radius */
         * {
             border-radius: 0 !important;
         }
 
-        /* Compact table cells */
         .table-compact td {
             padding-top: 0.375rem !important;
             padding-bottom: 0.375rem !important;
         }
 
-        /* Badge styling */
         .event-badge {
             background: rgba(99, 102, 241, 0.1);
             color: #818cf8;
@@ -77,55 +68,89 @@
         .event-badge.academic { background: rgba(99, 102, 241, 0.1); color: #818cf8; }
         .event-badge.cultural { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
         .event-badge.sports { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
-        
+
+        @media (max-width: 768px) {
+            .table-container {
+                height: auto;
+                overflow-x: auto;
+            }
+            
+            .table-body {
+                height: auto;
+            }
+        }
+
+        /* Transition classes */
+        .sidebar-transition {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .content-transition {
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        .overlay-transition {
+            transition: opacity 0.3s ease-in-out;
+        }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-300" x-data="{ currentView: 'notices', userDropdown: false }">
+<body class="bg-gray-900 text-gray-300" x-data="{ currentView: 'notices', userDropdown: false, sidebarOpen: false, mobileMenu: false }">
+    <!-- Mobile Sidebar Overlay -->
+    <div x-show="sidebarOpen" 
+         @click="sidebarOpen = false"
+         class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden overlay-transition"></div>
 
     <!-- Top Navigation Bar -->
     <nav class="fixed top-0 left-0 right-0 bg-gray-900/95 border-b border-gray-800 z-50">
         <div class="flex items-center justify-between h-14 px-4">
-            <!-- Left - Logo -->
-            <span class="flex items-center space-x-2">
-                <img src="/static/Images/Favicon/Top.png" alt="GMS Logo" class="h-8 w-8">
-                <span class="font-bold text-base gradient-text">ADMIN PANNEL</span>
-            </span>
+            <!-- Left - Logo & Hamburger -->
+            <div class="flex items-center space-x-4">
+                <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden text-gray-400 hover:text-white">
+                    <i class="ri-menu-line text-2xl"></i>
+                </button>
+                
+                <span class="flex items-center space-x-2">
+                    <img src="/static/Images/Favicon/Top.png" alt="GMS Logo" class="h-8 w-8">
+                    <span class="font-bold text-base gradient-text hidden sm:inline">ADMIN PANNEL</span>
+                </span>
+            </div>
 
             <!-- Center - Menu -->
-            <div class="flex items-center space-x-8">
-                <a href="{% url "create_notice_view" %}" class="flex items-center space-x-2 text-gray-400 hover:text-white text-sm">
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="{% url 'create_notice_view' %}" class="flex items-center space-x-2 text-gray-400 hover:text-white text-sm">
                     <i class="ri-notification-3-line text-lg"></i>
                     <span>Notices</span>
                 </a>
                 
-                <a href="{% url "create_gallery_view" %}" class="flex items-center space-x-2 text-gray-400 hover:text-white text-sm">
+                <a href="{% url 'create_gallery_view' %}" class="flex items-center space-x-2 text-gray-400 hover:text-white text-sm">
                     <i class="ri-gallery-line text-lg"></i>
                     <span>Gallery</span>
                 </a>
-                <a href="{% url "register_page_view" %}" class="flex items-center space-x-2 text-gray-400 hover:text-white text-sm">
+                <a href="{% url 'register_page_view' %}" class="flex items-center space-x-2 text-gray-400 hover:text-white text-sm">
                     <i class="ri-user-add-line text-lg"></i>
                     <span>Add User</span>
                 </a>
-                
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden">
+                <button @click="mobileMenu = !mobileMenu" class="text-gray-400 hover:text-white">
+                    <i class="ri-more-2-fill text-2xl"></i>
+                </button>
             </div>
 
             <!-- Right - User with Dropdown -->
             <div class="relative">
-                <button @click="userDropdown = !userDropdown" 
-                        class="flex items-center space-x-3 hover:bg-gray-800/50 px-3 py-1.5">
+                <button @click="userDropdown = !userDropdown" class="flex items-center space-x-3 hover:bg-gray-800/50 px-3 py-1.5">
                     <img src="https://www.w3schools.com/w3images/avatar5.png" alt="User" class="h-8 w-8">
-                    <span class="text-sm font-medium">{{ user.first_name }}</span>
+                    <span class="text-sm font-medium hidden sm:inline">{{ user.first_name }}</span>
                     <i class="ri-arrow-down-s-line"></i>
                 </button>
 
                 <!-- User Dropdown Menu -->
                 <div x-show="userDropdown" 
                      @click.away="userDropdown = false"
-                     class="absolute right-0 mt-1 w-48 bg-gray-800 border border-gray-700">
-                    <a href="#" class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-400 hover:bg-gray-700 hover:text-white">
-                        <i class="ri-lock-password-line"></i>
-                        <span>Change Password</span>
-                    </a>
+                     class="absolute right-0 mt-1 w-48 bg-gray-800 border border-gray-700 shadow-lg">
                     <a href="{% url 'logout_view' %}" class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-400 hover:bg-gray-700 hover:text-white">
                         <i class="ri-logout-box-line"></i>
                         <span>Logout</span>
@@ -133,30 +158,53 @@
                 </div>
             </div>
         </div>
+
+        <!-- Mobile Menu -->
+        <div x-show="mobileMenu" 
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 transform -translate-y-2"
+             x-transition:enter-end="opacity-100 transform translate-y-0"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 transform translate-y-0"
+             x-transition:leave-end="opacity-0 transform -translate-y-2"
+             class="absolute left-0 right-0 top-14 bg-gray-800 border-b border-gray-700 shadow-lg md:hidden">
+            <div class="p-4 space-y-3">
+                <a href="{% url 'create_notice_view' %}" class="block px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700">
+                    <i class="ri-notification-3-line mr-2"></i>Notices
+                </a>
+                <a href="{% url 'create_gallery_view' %}" class="block px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700">
+                    <i class="ri-gallery-line mr-2"></i>Gallery
+                </a>
+                <a href="{% url 'register_page_view' %}" class="block px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700">
+                    <i class="ri-user-add-line mr-2"></i>Add User
+                </a>
+            </div>
+        </div>
     </nav>
 
     <!-- Sidebar -->
-    <aside class="fixed left-0 top-14 bottom-0 w-64 bg-gray-800/50 border-r border-gray-800">
+    <aside class="fixed left-0 top-14 bottom-0 w-64 bg-gray-800/50 border-r border-gray-800 transform sidebar-transition z-50"
+           :class="{'translate-x-0': sidebarOpen, '-translate-x-full lg:translate-x-0': !sidebarOpen}">
         <div class="flex flex-col p-4">
             <div class="space-y-1">
-                <span class="flex items-center space-x-3 px-3 py-2 hover:bg-gray-700/50 cursor-pointer	" 
+                <span class="flex items-center space-x-3 px-3 py-2 hover:bg-gray-700/50 cursor-pointer" 
                    :class="{'bg-indigo-500/10 text-indigo-400': currentView === 'notices',
                            'text-gray-400 hover:text-white': currentView !== 'notices'}"
-                   @click="currentView = 'notices'">
+                   @click="currentView = 'notices'; sidebarOpen = false">
                     <i class="ri-notification-3-line"></i>
                     <span>Manage Notices</span>
                 </span>
-                <span class="flex items-center space-x-3 px-3 py-2 hover:bg-gray-700/50 cursor-pointer	" 
+                <span class="flex items-center space-x-3 px-3 py-2 hover:bg-gray-700/50 cursor-pointer" 
                    :class="{'bg-indigo-500/10 text-indigo-400': currentView === 'gallery',
                            'text-gray-400 hover:text-white': currentView !== 'gallery'}"
-                   @click="currentView = 'gallery'">
+                   @click="currentView = 'gallery'; sidebarOpen = false">
                     <i class="ri-gallery-line"></i>
                     <span>Manage Gallery</span>
                 </span>                
-                <span class="flex items-center space-x-3 px-3 py-2 hover:bg-gray-700/50 cursor-pointer	" 
+                <span class="flex items-center space-x-3 px-3 py-2 hover:bg-gray-700/50 cursor-pointer" 
                    :class="{'bg-indigo-500/10 text-indigo-400': currentView === 'contacts',
                            'text-gray-400 hover:text-white': currentView !== 'contacts'}"
-                   @click="currentView = 'contacts'">
+                   @click="currentView = 'contacts'; sidebarOpen = false">
                     <i class="ri-contacts-line"></i>
                     <span>Manage Contacts</span>
                 </span>
@@ -165,15 +213,16 @@
     </aside>
 
     <!-- Main Content Area -->
-    <main class="ml-64 pt-14 min-h-screen">
+    <main class="content-transition"
+          :class="{'ml-0 lg:ml-64': true, 'pt-14': true}">
         <!-- Notices Table -->
-        <div class="p-4 table-container" x-show="currentView === 'notices'">
+        <div class="p-4 table-container overflow-x-auto" x-show="currentView === 'notices'">
             <div class="mb-4">
                 <h2 class="text-xl font-bold">Manage Notices</h2>
             </div>
 
-            <div class="bg-gray-800/50 border border-gray-700">
-                <table class="w-full border-collapse table-compact">
+            <div class="bg-gray-800/50 border border-gray-700 overflow-x-auto">
+                <table class="w-full border-collapse table-compact min-w-[800px]">
                     <thead class="sticky-header">
                         <tr class="text-left border-b border-gray-700">
                             <th class="px-4 py-3 text-xs font-semibold text-gray-400 border">
@@ -232,13 +281,13 @@
         </div>
 
         <!-- Gallery Table -->
-        <div class="p-4 table-container" x-show="currentView === 'gallery'">
+        <div class="p-4 table-container overflow-x-auto" x-show="currentView === 'gallery'">
             <div class="mb-4">
                 <h2 class="text-xl font-bold">Manage Gallery</h2>
             </div>
 
-            <div class="bg-gray-800/50 border border-gray-700">
-                <table class="w-full border-collapse table-compact">
+            <div class="bg-gray-800/50 border border-gray-700 overflow-x-auto">
+                <table class="w-full border-collapse table-compact min-w-[800px]">
                     <thead class="sticky-header">
                         <tr class="text-left border-b border-gray-700">
                             <th class="px-4 py-3 text-xs font-semibold text-gray-400 border">
@@ -274,8 +323,7 @@
                             <td class="px-4 py-2 text-sm border">
                                 <div class="flex items-center space-x-3">
                                     {% if user.is_superuser or user.is_staff or gallery.created_by == user %}
-                                        <a href="{% url 'update_gallery_view' gallery.id %}" 
-                                           class="text-blue-400 hover:text-blue-300">
+                                        <a href="{% url 'update_gallery_view' gallery.id %}" class="text-blue-400 hover:text-blue-300">
                                             <i class="ri-edit-line"></i>
                                         </a>
                                         <a href="{% url 'delete_gallery_view' gallery.id %}" 
@@ -294,16 +342,15 @@
                 </table>
             </div>
         </div>
-      
 
         <!-- Contacts Table -->
-        <div class="p-4 table-container" x-show="currentView === 'contacts'">
+        <div class="p-4 table-container overflow-x-auto" x-show="currentView === 'contacts'">
             <div class="mb-4">
                 <h2 class="text-xl font-bold">Manage Contacts</h2>
             </div>
 
-            <div class="bg-gray-800/50 border border-gray-700">
-                <table class="w-full border-collapse table-compact">
+            <div class="bg-gray-800/50 border border-gray-700 overflow-x-auto">
+                <table class="w-full border-collapse table-compact min-w-[800px]">
                     <thead class="sticky-header">
                         <tr class="text-left border-b border-gray-700">
                             <th class="px-4 py-3 text-xs font-semibold text-gray-400 border">
@@ -320,26 +367,55 @@
                             </th>
                         </tr>
                     </thead>
-                    {% for data in VisitorContactData %}
                     <tbody class="table-body">
+                        {% for data in VisitorContactData %}
                         <tr class="hover:bg-gray-700/50">
                             <td class="px-4 py-2 text-sm border">{{data.Fullname}}</td>
-                            {% if data.Email %}
-                            <td class="px-4 py-2 text-sm border">{{ data.Email }}</td>
-                            {% else %}
-                            <td class="px-4 py-2 text-sm border">N/G</td>
-                            {% endif %}
+                            <td class="px-4 py-2 text-sm border">
+                                {% if data.Email %}
+                                    {{ data.Email }}
+                                {% else %}
+                                    <span class="text-gray-500">N/G</span>
+                                {% endif %}
+                            </td>
                             <td class="px-4 py-2 text-sm border">{{data.PhoneNumber}}</td>
                             <td class="px-4 py-2 text-sm border">{{data.Message}}</td>
-                        </tr>                        
+                        </tr>
+                        {% endfor %}
                     </tbody>
-                    {% endfor %}
                 </table>
             </div>
         </div>
     </main>
 
-    <!-- AlpineJS -->
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Additional mobile responsiveness script -->
+    <script>
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.mobile-menu') && !event.target.closest('[x-data]')) {
+                let menu = document.querySelector('[x-data]').__x.$data;
+                if (menu.mobileMenu) {
+                    menu.mobileMenu = false;
+                }
+            }
+        });
+
+        // Handle resize events
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 1024) {  // lg breakpoint
+                let menu = document.querySelector('[x-data]').__x.$data;
+                menu.sidebarOpen = true;  // Always show sidebar on large screens
+                menu.mobileMenu = false;  // Hide mobile menu
+            }
+        });
+
+        // Initialize state based on screen size
+        window.addEventListener('load', function() {
+            let menu = document.querySelector('[x-data]').__x.$data;
+            menu.sidebarOpen = window.innerWidth >= 1024;
+        });
+    </script>
 </body>
 </html>
