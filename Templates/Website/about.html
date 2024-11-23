@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMS ABOUT</title>
+
+    <link rel="shortcut icon" href="/static/Images/Favicon/Top.png" type="image/x-icon">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    
+    <!-- Remix Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.min.css" rel="stylesheet">
+    
+    <!-- Custom Styles -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #6366F1;
+            --secondary: #EC4899;
+            --dark: #0F172A;
+            --light: #F8FAFC;
+        }
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--dark);
+            overflow-x: hidden;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+        
+        .hover-gradient:hover {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .glow {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            filter: blur(100px);
+            opacity: 0.15;
+            z-index: -1;
+        }
+        
+        .glow-primary {
+            background: var(--primary);
+        }
+        
+        .glow-secondary {
+            background: var(--secondary);
+        }
+        
+        .grid-bg {
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .slide-up {
+            animation: slideUp 0.6s ease forwards;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .card {
+                margin: 1rem 0;
+            }
+            
+            .glow {
+                width: 300px;
+                height: 300px;
+            }
+            
+            .mobile-menu {
+                height: 100vh;
+                width: 100vw;
+            }
+            
+            .mobile-menu-content {
+                height: calc(100vh - 5rem);
+                overflow-y: auto;
+            }
+        }
+
+        /* Dropdown Styles */
+        .dropdown-content {
+            transform-origin: top;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-content.hidden {
+            transform: scaleY(0);
+            opacity: 0;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--dark);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        /* Course Cards */
+        .course-card {
+            transition: all 0.3s ease;
+        }
+
+        .course-card:hover .course-overlay {
+            opacity: 1;
+        }
+
+        .course-overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Map Container */
+        .map-container {
+            height: 400px;
+            width: 100%;
+        }
+
+        /* Form Styles */
+        .input-style {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .input-style:focus {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Image Hover Effects */
+        .image-hover {
+            overflow: hidden;
+        }
+
+        .image-hover img {
+            transition: transform 0.5s ease;
+        }
+
+        .image-hover:hover img {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300">
+
+<!-- Ultra Compact Navigation -->
+<nav class="fixed w-full z-50 transition-all duration-300 border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between items-center h-14">
+            <!-- Logo -->
+            <a href="/" class="flex items-center space-x-2">
+                <img src="/static/Images/Favicon/Top.png" alt="GMS Logo" class="h-8 w-8">
+                <span class="font-bold text-base gradient-text">GANESHMAN  SINGH MULTIPLE CAMPUS</span>
+            </a>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden lg:flex items-center space-x-5">
+                <a href="/" class="nav-link flex items-center space-x-1.5 text-gray-300 hover:text-white text-xs">
+                    <i class="ri-home-4-line text-sm"></i>
+                    <span>Home</span>
+                </a>
+                <a href="{% url "about_page_view" %}" class="nav-link flex items-center space-x-1.5 text-gray-300 hover:text-white text-xs">
+                    <i class="ri-information-line text-sm"></i>
+                    <span>About</span>
+                </a>
+                <a href="{% url "courses_page_view" %}" class="nav-link flex items-center space-x-1.5 text-gray-300 hover:text-white text-xs">
+                    <i class="ri-book-open-line text-sm"></i>
+                    <span>Courses</span>
+                </a>
+                <a href="{% url "Notices_page_view" %}" class="nav-link flex items-center space-x-1.5 text-gray-300 hover:text-white text-xs">
+                    <i class="ri-notification-3-line text-sm"></i>
+                    <span>Notices</span>
+                </a>
+                <a href="{% url "Gallery_page_view" %}" class="nav-link flex items-center space-x-1.5 text-gray-300 hover:text-white text-xs">
+                    <i class="ri-gallery-line text-sm"></i>
+                    <span>Gallery</span>
+                </a>                
+                <a href="{% url "contact_page_view" %}" class="nav-link flex items-center space-x-1.5 text-gray-300 hover:text-white text-xs">
+                    <i class="ri-phone-line text-sm"></i>
+                    <span>Contact</span>
+                </a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button class="lg:hidden text-gray-300 p-1" id="mobile-menu-button">
+                <i class="ri-menu-line text-lg"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Mobile Menu Overlay -->
+<div class="hidden fixed inset-0 z-40 bg-gray-900/90 backdrop-blur-sm mobile-menu" id="mobile-menu">
+    <div class="flex flex-col h-full">
+        <div class="flex justify-end p-3">
+            <button class="text-gray-300 p-1" id="mobile-menu-close">
+                <i class="ri-close-line text-lg"></i>
+            </button>
+        </div>
+        <div class="flex-1 flex flex-col items-center justify-center space-y-5">
+            <a href="/" class="text-gray-300 hover:text-white flex items-center space-x-2 text-sm">
+                <i class="ri-home-4-line"></i>
+                <span>Home</span>
+            </a>
+            <a href="{% url "about_page_view" %}" class="text-gray-300 hover:text-white flex items-center space-x-2 text-sm">
+                <i class="ri-information-line"></i>
+                <span>About</span>
+            </a>
+            <a href="{% url "courses_page_view" %}" class="text-gray-300 hover:text-white flex items-center space-x-2 text-sm">
+                <i class="ri-book-open-line"></i>
+                <span>Courses</span>
+            </a>
+
+            <a href="{% url "Notices_page_view" %}" class="text-gray-300 hover:text-white flex items-center space-x-2 text-sm">
+                <i class="ri-notification-3-line"></i>
+                    <span>Notices</span>
+            </a>
+
+            <a href="{% url "Gallery_page_view" %}" class="text-gray-300 hover:text-white flex items-center space-x-2 text-sm">
+                <i class="ri-gallery-line"></i>
+                    <span>Gallery</span>
+            </a>      
+        </div>
+    </div>
+</div>
+
+
+
+    <!-- About Content -->
+    <section class="pt-28 pb-20 relative overflow-hidden grid-bg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12">
+                    <h6 class="text-sm font-semibold gradient-text mb-4">ABOUT US</h6>
+                    <h1 class="text-4xl lg:text-5xl font-bold mb-6">Our Story</h1>
+                </div>
+
+                <div class="about-image mb-12">
+                    <img src="https://c0.wallpaperflare.com/preview/412/1015/756/nepal-kathmandu-swayambhu-maha-chaitya.jpg" 
+                         alt="Ganeshman Singh Multiple Campus" 
+                         class="w-full rounded shadow-2xl">
+                </div>
+
+                <div class="prose prose-lg text-gray-300 max-w-none text-justify">
+                    <p class="text-lg leading-relaxed mb-6">
+                        गणेशमान सिंह बहुमुखी क्याम्पसको स्थापना २०६४ वर्षमा, दिवंगत जनतान्त्रिक नेता गणेशमान सिंहको सम्झनामा गरिएको हो। यो क्याम्पस २०६३/२०६४ को ऐतिहासिक जनआन्दोलको श्रद्धांजलि स्वरुप पनि रहेको छ र विभिन्न जात, धर्म, लिङ्ग, समुदाय र भाषिक पृष्ठभूमिका छात्रहरूसँग गुणस्तरीय शिक्षा प्रदान गर्दछ। काठमाडौँको कालंकीमा स्थित, जीएमएस एक शैक्षिक संस्थान हो जसले विद्यार्थीहरूलाई उचित मूल्यमा उच्च शिक्षा प्रदान गर्दछ। यो क्याम्पस उच्च शैक्षिक उत्कृष्टता र राम्रो शैक्षिक प्रविधिको अभावको कारण एक उत्साह र जनविश्वासको परिणाम हो।
+
+                        विद्यार्थीहरूको उत्कृष्ट सृजनात्मकता र नवाचारको प्रवृत्तिलाई प्रोत्साहित गर्नका लागि, जीएमएसले व्यवस्थापन र मानविकीका क्षेत्रमा प्राज्ञिक शिक्षा, उपयुक्त तालिम र अनुसन्धानको अवसर प्रदान गर्दछ। यसका अतिरिक्त, जीएमएसको मुख्य सिद्धान्त भनेको विद्यार्थीहरूलाई यस्तो शिक्षा दिनु हो जसले तिनीहरूलाई सामाजिक संरचनामा रूपान्तरण गर्न मद्दत पुर्याउँछ—नैतिक, परम्परागत, सांस्कृतिक र शैक्षिक दृष्टिले। थप रूपमा, जीएमएसको स्नातक कार्यक्रमहरूको सफलता र विद्यार्थीहरूको सकारात्मक प्रतिक्रियाले +२ कार्यक्रमको प्रारम्भ गर्ने चाहनालाई उत्प्रेरित गरेको छ। यसै कारण, जीएमएसले अहिले स्नातक र +२ स्तरका पाठ्यक्रमहरू पनि उपलब्ध गराउँछ, जसले विद्यार्थीहरूलाई उच्च शिक्षाको नयाँ अवसर प्रदान गर्दछ।
+                        
+                        उद्देश्यहरू: जीएमएसको मुख्य उद्देश्य भनेको शिक्षा व्यावसायिक बनाउन, विद्यार्थीहरूलाई प्रतिस्पर्धी र जिम्मेवार नागरिक बनाउन सुनिश्चित गर्नु हो। यस उद्देश्यलाई पूरा गर्नका लागि, जीएमएसले सकारात्मक मानसिकता र दृष्टिकोण विकास गर्न मद्दत पुर्याउँछ र विद्यार्थीहरूमा आत्मविश्वास र कुशलताको विकासलाई प्रोत्साहित गर्दछ। यसैगरी, जीएमएसले विद्यार्थीहरूमा यस्तो मानसिकता ठाँउ दिन चाहन्छ जसले उनीहरूलाई केवल शैक्षिक दृष्टिले उत्कृष्ट बनाउन मात्र नभइ समाजका जिम्मेवार सदस्यको रूपमा पनि तयार पार्दछ। यसै कारण, जीएमएसले विद्यार्थीहरूलाई आफ्नो क्षमता र दक्षता बढाउनका लागि प्रायः अतिरिक्त कक्षाहरू, तालिम र परियोजनाहरू उपलब्ध गराउँछ। यी अवसरहरूले विद्यार्थीहरूलाई न केवल शैक्षिक स्तरमा, बल्कि व्यक्तिगत र सामाजिक जीवनमा पनि उत्कृष्टता प्राप्त गर्न मद्दत गर्दछ।
+                        
+                        नियमहरू: जीएमएसले कडा अनुशासनको पालनमा दृढ विश्वास राख्छ र यसलाई शैक्षिक प्रगतिको लागि आवश्यक मान्दछ। यी आदर्शहरूको आधारमा, जीएमएसले विद्यार्थीहरूलाई उदाहरणका रूपमा प्रस्तुत गर्नका लागि एक कोड अफ कन्डक्टको पालन गरिरहेको छ जसले उनीहरूलाई असल व्यक्तित्वमा रूपान्तरण गर्न सहयोग पुर्याउँछ।
+                        
+                        क्याम्पसको भित्र प्रवेश गर्दा विद्यार्थीहरूले स्वच्छ र व्यवस्थित युनिफर्म लगाउनु पर्नेछ र समयसीमाभित्र प्रवेश गर्नु पर्नेछ। विद्यार्थीहरूको बोर्ड परीक्षा दिनका लागि कम्तीमा ७५ प्रतिशत उपस्थिति अनिवार्य छ। क्याम्पसको सम्पत्ति नष्ट गर्ने विद्यार्थीहरूले त्यसको क्षतिपूर्ति बुझाउनु पर्नेछ। त्यसका साथै, क्याम्पसमा राजनीतिक कार्यक्रमहरूको प्रचार गर्ने काम कडाइका साथ निषेध गरिएको छ र यस्तो कार्यमा संलग्न हुने विद्यार्थीलाई कडा कारवाही गरिनेछ। जीएमएसको प्रमुख उद्देश्य भनेको विद्यार्थीहरूलाई जीवनका विभिन्न क्षेत्रहरूमा उज्ज्वल भविष्य निर्माण गर्न मद्दत गर्नु हो, र यसका लागि शैक्षिक प्रगति, व्यक्तिगत र सामाजिक जिम्मेवारीमा सुधार आवश्यक छ।
+                        
+                        क्याम्पसमा शैक्षिक वातावरणलाई अझ उत्कृष्ट बनाउनका लागि, जीएमएसले नियमित रूपमा विभिन्न शैक्षिक कार्यक्रमहरू, सेमिनारहरू, र वर्कशपहरूको आयोजना गर्ने गर्दछ जसमा विद्यार्थीहरूले आफ्नो ज्ञान र सीपलाई थप उचाइमा पुर्याउन सक्छन्। यसबाहेक, विद्यार्थीहरूको समग्र विकासमा ध्यान दिने क्रममा, जीएमएसले शारीरिक, मानसिक र सांस्कृतिक गतिविधिहरूको आयोजना पनि गर्दै आएको छ। यसले विद्यार्थीहरूको बहुआयामिक विकासमा योगदान पुर्याउने उद्देश्य राखेको छ।
+                        
+                        अन्त्यमा, जीएमएसको उद्देश्य केवल शैक्षिक मात्र नभइ, विद्यार्थीहरूलाई एक जिम्मेवार र सक्षम नागरिकको रूपमा रूपान्तरण गर्नु हो जसले समाजको भलाईका लागि काम गर्न सक्षम होस्।
+                    </p>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+<footer class="pt-20 pb-10 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+            <!-- About -->
+            <div>
+                <img src="/static/Images/Favicon/Top.png" alt="GMS Logo" class="w-12 h-12 mb-6">
+                <p class="text-gray-400 mb-6">
+                    Empowering futures through quality education and innovation at Ganeshman Singh Multiple Campus.
+                </p>
+                <div class="flex space-x-4">
+                    <a href="https://www.facebook.com/gmsmultiplecampus.kalanki" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="ri-facebook-fill text-xl"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div>
+                <h4 class="text-lg font-semibold mb-6">Quick Links</h4>
+                <ul class="space-y-4">
+                    <li>
+                        <a href="{% url "about_page_view" %}" class="text-gray-400 hover:text-white flex items-center space-x-2">
+                            <i class="ri-arrow-right-s-line"></i>
+                            <span>About Us</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url "courses_page_view" %}" class="text-gray-400 hover:text-white flex items-center space-x-2">
+                            <i class="ri-arrow-right-s-line"></i>
+                            <span>Courses</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url "contact_page_view" %}" class="text-gray-400 hover:text-white flex items-center space-x-2">
+                            <i class="ri-arrow-right-s-line"></i>
+                            <span>Contact</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Programs -->
+            <div>
+                <h4 class="text-lg font-semibold mb-6">Our Programs</h4>
+                <ul class="space-y-4">
+                    <li>
+                        <a href="https://fohss.tu.edu.np/pages/bca-programm-1597" class="text-gray-400 hover:text-white flex items-center space-x-2">
+                            <i class="ri-arrow-right-s-line"></i>
+                            <span>BCA</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://tucdc.edu.np/upload_file/files/post/1633099015_1375582198_Curriculum_Bachelor%20of%20Business%20Studies_4th%20Year_2016.pdf" class="text-gray-400 hover:text-white flex items-center space-x-2">
+                            <i class="ri-arrow-right-s-line"></i>
+                            <span>BBS</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://tucdc.edu.np/post/69" class="text-gray-400 hover:text-white flex items-center space-x-2">
+                            <i class="ri-arrow-right-s-line"></i>
+                            <span>BA</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://tu.edu.np/pages/faculty-of-education-17" class="text-gray-400 hover:text-white flex items-center space-x-2">
+                            <i class="ri-arrow-right-s-line"></i>
+                            <span>B.Ed</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Newsletter -->
+            <div>
+                <h4 class="text-lg font-semibold mb-6">Newsletter</h4>
+                <p class="text-gray-400 mb-6">
+                    Subscribe to our newsletter for updates and news.
+                </p>
+                <form class="space-y-4">
+                    <input type="email" placeholder="Your email address" 
+                           class="w-full bg-gray-900/50 border border-gray-800 rounded-sm p-3 text-white focus:border-indigo-500 focus:outline-none">
+                    <button type="submit" class="w-full gradient-bg text-white py-3 font-semibold hover:opacity-90 transition-opacity">
+                        Subscribe
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="border-t border-gray-800 pt-8 text-center">
+            <p class="text-gray-400">
+                Designed By 
+                <a href="https://www.omkumarpandey.com.np/" target="_blank" class="gradient-text font-semibold">
+                    Om Pandey
+                </a> 
+                - 2022 Batch BCA Ganeshman Singh Multiple Campus
+            </p>
+        </div>
+    </div>
+</footer>
+
+<!-- JavaScript -->
+<script>
+    // DOM Elements
+    const html = document.documentElement;
+    const body = document.body;
+    const nav = document.querySelector('nav');
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileMenuClose = document.getElementById('mobile-menu-close');
+    const mobileLibraryBtn = document.getElementById('mobile-library-btn');
+    const mobileLibraryContent = document.getElementById('mobile-library-content');
+    const libraryDropdownBtn = document.getElementById('library-dropdown-btn');
+    const libraryDropdown = document.getElementById('library-dropdown');
+
+    // State Management
+    let lastScroll = 0;
+    let isMenuOpen = false;
+    let isLibraryOpen = false;
+
+    // Utility Functions
+    const lockScroll = () => {
+        html.style.overflow = 'hidden';
+        body.style.overflow = 'hidden';
+    };
+
+    const unlockScroll = () => {
+        html.style.overflow = '';
+        body.style.overflow = '';
+    };
+
+    const closeAllMenus = () => {
+        libraryDropdown.classList.add('hidden');
+        mobileLibraryContent.classList.add('hidden');
+        isLibraryOpen = false;
+    };
+
+    // Mobile Menu Handlers
+    const toggleMobileMenu = () => {
+        isMenuOpen = !isMenuOpen;
+        if (isMenuOpen) {
+            mobileMenu.classList.remove('hidden');
+            lockScroll();
+        } else {
+            mobileMenu.classList.add('hidden');
+            unlockScroll();
+            closeAllMenus();
+        }
+    };
+
+    // Event Listeners
+    mobileMenuButton.addEventListener('click', toggleMobileMenu);
+    mobileMenuClose.addEventListener('click', toggleMobileMenu);
+
+    // Library Dropdown Handlers
+    libraryDropdownBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        isLibraryOpen = !isLibraryOpen;
+        libraryDropdown.classList.toggle('hidden');
+    });
+
+    mobileLibraryBtn.addEventListener('click', () => {
+        isLibraryOpen = !isLibraryOpen;
+        mobileLibraryContent.classList.toggle('hidden');
+    });
+
+    // Click Outside Handlers
+    document.addEventListener('click', (e) => {
+        if (!libraryDropdownBtn.contains(e.target)) {
+            libraryDropdown.classList.add('hidden');
+            isLibraryOpen = false;
+        }
+    });
+
+    // Updated Scroll Handler for Sticky Navigation
+    let scrollTimeout;
+    window.addEventListener('scroll', () => {
+        if (scrollTimeout) {
+            window.cancelAnimationFrame(scrollTimeout);
+        }
+
+        scrollTimeout = window.requestAnimationFrame(() => {
+            const currentScroll = window.pageYOffset;
+            
+            // Initial state (top of page)
+            if (currentScroll <= 0) {
+                nav.classList.remove('backdrop-blur-lg', 'bg-gray-900/50', 'shadow-lg');
+                nav.classList.add('bg-transparent');
+            } 
+            // Scrolled state
+            else {
+                if (currentScroll > lastScroll) {
+                    // Scrolling down
+                    nav.classList.add('backdrop-blur-lg', 'bg-gray-900/50', 'shadow-lg');
+                    nav.classList.remove('bg-transparent');
+                } else {
+                    // Scrolling up
+                    nav.classList.add('backdrop-blur-lg', 'bg-gray-900/50', 'shadow-lg');
+                    nav.classList.remove('bg-transparent');
+                }
+            }
+
+            lastScroll = currentScroll;
+        });
+    });
+
+    // Keyboard Navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeAllMenus();
+            if (isMenuOpen) {
+                toggleMobileMenu();
+            }
+        }
+    });
+
+    // Touch Events for Mobile
+    let touchStartY = 0;
+    document.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+    });
+
+    document.addEventListener('touchmove', (e) => {
+        const touchY = e.touches[0].clientY;
+        const diff = touchStartY - touchY;
+
+        if (isMenuOpen && diff > 50) {
+            toggleMobileMenu();
+        }
+    });
+
+    // Resize Handler
+    window.addEventListener('resize', () => {
+        if (window.innerWidth >= 1024 && isMenuOpen) {
+            toggleMobileMenu();
+        }
+    });
+
+    // Smooth Scroll for Anchor Links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                if (isMenuOpen) {
+                    toggleMobileMenu();
+                }
+            }
+        });
+    });
+
+    // Initial state check on page load
+    window.addEventListener('load', () => {
+        if (window.pageYOffset > 0) {
+            nav.classList.add('backdrop-blur-lg', 'bg-gray-900/50', 'shadow-lg');
+            nav.classList.remove('bg-transparent');
+        }
+    });
+</script>
+
+<!-- Disable Right-Click and F12 -->
+<script>
+    // Disable right-click
+    document.addEventListener('contextmenu', function (e) {
+      e.preventDefault();
+    });
+  
+    // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+    document.addEventListener('keydown', function (e) {
+      if (
+        e.key === "F12" || 
+        (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J")) || 
+        (e.ctrlKey && e.key === "U") || 
+        (e.ctrlKey && e.shiftKey && e.key === "C")
+      ) {
+        e.preventDefault();
+      }
+    });
+  </script>
+
+</body>
+</html>

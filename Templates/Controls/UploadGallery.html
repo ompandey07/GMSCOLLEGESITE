@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ is_update|yesno:"UPDATE,POST" }} IMAGE</title>
+
+    <!-- Fav Icon -->
+    <link rel="shortcut icon" href="/static/Images/Favicon/Top.png" type="image/x-icon">
+
+    <!-- AlpineJS -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Remix Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.min.css" rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary: #6366F1;
+            --dark: #0F172A;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--dark);
+        }
+
+        .circle-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+        }
+
+        .upload-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            color: #fff;
+            background-color: #6366F1;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .upload-btn:hover {
+            background-color: #4F46E5;
+            transform: translateY(-2px);
+        }
+
+        .modal-backdrop {
+            background-color: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            animation: modalFade 0.3s ease-out;
+        }
+
+        @keyframes modalFade {
+            from {
+                opacity: 0;
+                transform: translateY(-1rem);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-gradient {
+            background: linear-gradient(135deg, #059669, #10B981);
+        }
+
+        .error-gradient {
+            background: linear-gradient(135deg, #DC2626, #EF4444);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-gray-300 min-h-screen flex items-center justify-center">
+    <!-- Message Modal -->
+    {% if messages %}
+    <div x-data="{ show: true }" 
+         x-show="show" 
+         x-transition
+         class="fixed inset-0 z-50 flex items-center justify-center">
+        <div class="modal-backdrop absolute inset-0"></div>
+
+        {% for message in messages %}
+        <div class="modal-content relative z-10 w-96">
+            <div class="{% if message.tags == 'error' %}error-gradient{% else %}success-gradient{% endif %} p-6 shadow-2xl flex items-center">
+                <div class="flex-shrink-0 mr-4">
+                    {% if message.tags == 'error' %}
+                    <i class="ri-error-warning-fill text-4xl text-white"></i>
+                    {% else %}
+                    <i class="ri-checkbox-circle-fill text-4xl text-white"></i>
+                    {% endif %}
+                </div>
+                <div class="flex-1 text-white font-medium">{{ message }}</div>
+                <button @click="show = false" class="ml-4 text-white hover:opacity-75 transition-opacity">
+                    <i class="ri-close-line text-2xl"></i>
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Admin Panel Navigation -->
+    <div class="fixed top-4 right-4">
+        <a href="{% url 'admin_pannel_view' %}" 
+           class="flex items-center space-x-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 transition-colors">
+            <i class="ri-dashboard-line"></i>
+            <span>Back to Admin Panel</span>
+        </a>
+    </div>
+
+    <!-- Gallery Form -->
+    <div class="card max-w-md w-full p-6 shadow-lg text-center text-gray-300 bg-gray-800">
+        <!-- Form Title -->
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-white mt-4">
+                {{ is_update|yesno:"Update,Add" }} Gallery Image
+            </h1>
+            <p>{{ is_update|yesno:"Update existing image,Upload images for the gallery" }}</p>
+        </div>
+
+        <!-- Form -->
+        <form method="POST" enctype="multipart/form-data" class="space-y-6" id="galleryForm">
+            {% csrf_token %}
+            <!-- Image Upload -->
+            <div class="flex flex-col items-center">
+                <!-- Circle Image Preview -->
+                <img id="imagePreview" class="circle-img" 
+                     src="{% if gallery.image %}{{ gallery.image.url }}{% else %}https://via.placeholder.com/100{% endif %}" 
+                     alt="{{ gallery.title|default:'Default Image' }}">
+
+                <!-- Upload Button -->
+                <label class="upload-btn mt-4 cursor-pointer">
+                    <i class="ri-upload-2-line text-lg mr-2"></i> 
+                    {{ is_update|yesno:"Change Image,Upload Image" }}
+                    <input type="file" id="imageUpload" name="image" accept="image/*" class="hidden" onchange="previewImage(event)"
+                           {% if not is_update %}required{% endif %}>
+                </label>
+            </div>
+
+            <!-- Title -->
+            <div>
+                <label for="title" class="block text-sm font-medium mb-2">
+                    <i class="ri-text"></i> Title
+                </label>
+                <input type="text" id="title" name="title" 
+                       placeholder="Enter image title"
+                       value="{{ gallery.title|default:'' }}"
+                       required
+                       class="w-full px-4 py-2 text-sm bg-gray-700 border border-gray-600 focus:border-blue-400 text-gray-300">
+            </div>
+
+            <!-- Description -->
+            <div>
+                <label for="description" class="block text-sm font-medium mb-2">
+                    <i class="ri-file-text-line"></i> Description
+                </label>
+                <textarea id="description" name="description" rows="3"
+                    class="w-full px-4 py-2 text-sm bg-gray-700 border border-gray-600 focus:border-blue-400 text-gray-300"
+                    placeholder="Enter a brief description"
+                    required>{{ gallery.description|default:'' }}</textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit"
+                class="w-full py-2 text-white bg-blue-600 hover:bg-blue-700 text-sm hover-gradient">
+                {{ is_update|yesno:"Update,Submit" }} Image
+            </button>
+        </form>
+    </div>
+
+    <!-- JavaScript for Image Preview -->
+    <script>
+        function previewImage(event) {
+            const image = document.getElementById('imagePreview');
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function() {
+                    image.src = reader.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+</body>
+</html>

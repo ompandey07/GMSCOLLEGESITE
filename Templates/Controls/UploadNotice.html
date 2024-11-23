@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POST NOICE</title>
+
+    <link rel="shortcut icon" href="/static/Images/Favicon/Top.png" type="image/x-icon">
+
+    <!-- AlpineJS -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Remix Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.min.css" rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary: #6366F1;
+            --secondary: #EC4899;
+            --dark: #0F172A;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--dark);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus,
+        button:focus {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        .modal-backdrop {
+            background-color: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            animation: modalFade 0.3s ease-out;
+        }
+
+        @keyframes modalFade {
+            from {
+                opacity: 0;
+                transform: translateY(-1rem);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-gradient {
+            background: linear-gradient(135deg, #059669, #10B981);
+        }
+
+        .error-gradient {
+            background: linear-gradient(135deg, #DC2626, #EF4444);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-gray-300 grid-bg min-h-screen flex items-center justify-center">
+    <!-- Message Modal -->
+    {% if messages %}
+    <div x-data="{ show: true }" 
+         x-show="show" 
+         x-transition
+         class="fixed inset-0 z-50 flex items-center justify-center">
+        <!-- Backdrop -->
+        <div class="modal-backdrop absolute inset-0"></div>
+
+        {% for message in messages %}
+        <!-- Modal Content -->
+        <div class="modal-content relative z-10 w-96">
+            <div class="{% if message.tags == 'error' %}error-gradient{% else %}success-gradient{% endif %} p-6 shadow-2xl flex items-center">
+                <!-- Icon -->
+                <div class="flex-shrink-0 mr-4">
+                    {% if message.tags == 'error' %}
+                    <i class="ri-error-warning-fill text-4xl text-white"></i>
+                    {% else %}
+                    <i class="ri-checkbox-circle-fill text-4xl text-white"></i>
+                    {% endif %}
+                </div>
+
+                <!-- Message -->
+                <div class="flex-1 text-white font-medium">
+                    {{ message }}
+                </div>
+
+                <!-- Close Button -->
+                <button @click="show = false" class="ml-4 text-white hover:opacity-75 transition-opacity">
+                    <i class="ri-close-line text-2xl"></i>
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Admin Panel Navigation -->
+    <div class="fixed top-4 right-4">
+        <a href="{% url 'admin_pannel_view' %}" 
+           class="flex items-center space-x-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-sm transition-colors">
+            <i class="ri-dashboard-line"></i>
+            <span>Back to Admin Panel</span>
+        </a>
+    </div>
+
+    <!-- Upload Notice Card -->
+    <div class="card max-w-md w-full p-6 rounded-sm shadow-lg text-center text-gray-300">
+        <!-- Logo -->
+        <div class="mb-6">
+            <img src="/static/Images/GMSLOGO/GMSLOGO.jpg" alt="Campus Logo" 
+            class="mx-auto w-20 h-20">
+            <h1 class="text-2xl font-bold gradient-text mt-4">
+                {% if is_update %}Update{% else %}Upload{% endif %} Notice
+            </h1>
+            <p>{% if is_update %}Update{% else %}Post{% endif %} a Notice for Ganeshman Singh Multiple Campus</p>
+        </div>
+
+        <!-- Form -->
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            <!-- Category -->
+            <div>
+                <label for="category" class="block text-sm font-medium flex items-center gap-2">
+                    <i class="ri-file-list-line"></i> Category
+                </label>
+                <select id="category" name="category" required
+                    class="w-full px-4 py-2 mt-1 text-sm bg-gray-800 border border-gray-600 focus:border-blue-400 text-gray-300">
+                    <option value="" disabled {% if not notice %}selected{% endif %}>Select a category</option>
+                    {% for value, display in CATEGORY_CHOICES %}
+                        <option value="{{ value }}" {% if notice and notice.category == value %}selected{% endif %}>
+                            {{ display }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+        
+            <!-- Title -->
+            <div>
+                <label for="title" class="block text-sm font-medium flex items-center gap-2">
+                    <i class="ri-pencil-line"></i> Title
+                </label>
+                <input type="text" id="title" name="title" 
+                       placeholder="Enter notice title" 
+                       value="{{ notice.title|default:'' }}"
+                       required
+                       class="w-full px-4 py-2 mt-1 text-sm bg-gray-800 border border-gray-600 focus:border-blue-400 text-gray-300">
+            </div>
+        
+            <!-- Description -->
+            <div>
+                <label for="description" class="block text-sm font-medium flex items-center gap-2">
+                    <i class="ri-edit-line"></i> Description
+                </label>
+                <textarea id="description" name="description" rows="5" 
+                          placeholder="Enter notice description" 
+                          required
+                          class="w-full px-4 py-2 mt-1 text-sm bg-gray-800 border border-gray-600 focus:border-blue-400 text-gray-300">{{ notice.description|default:'' }}</textarea>
+            </div>
+        
+            <!-- Submit Button -->
+            <button type="submit"
+                class="w-full py-2 text-white bg-blue-600 hover:bg-blue-700 text-sm hover-gradient">
+                {% if is_update %}Update{% else %}Upload{% endif %} Notice
+            </button>
+        </form>
+        
+    </div>
+</body>
+</html>
