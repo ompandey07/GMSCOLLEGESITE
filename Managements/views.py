@@ -101,7 +101,7 @@ def Notices_page_view (request):
 
 
 #! Register View 
-@login_required
+# @login_required
 def register_page_view(request):
     if request.method == 'POST':
         name = request.POST.get('name')
