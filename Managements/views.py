@@ -199,18 +199,23 @@ def create_notice_view(request):
         category = request.POST.get('category')
         title = request.POST.get('title')
         description = request.POST.get('description')
+        image = request.FILES.get('image')
 
-        if not all([category, title, description]):
-            messages.error(request, 'All fields are required')
+        # Only validate category
+        if not category:
+            messages.error(request, 'Category is required')
             return redirect('create_notice_view')
 
         try:
-            Notice.objects.create(
+            notice = Notice.objects.create(
                 category=category,
-                title=title,
-                description=description,
+                title=title if title else None,
+                description=description if description else None,
                 created_by=request.user
             )
+            if image:
+                notice.image = image
+                notice.save()
             messages.success(request, 'Notice created successfully')
             return redirect('create_notice_view')
         except Exception as e:
@@ -226,34 +231,44 @@ def create_notice_view(request):
 
 
 
-
-#! UPdate Notice View
+# Update Notice View
 @login_required
 def update_notice_view(request, notice_id):
-    # Get notice and check ownership
     notice = get_object_or_404(Notice, id=notice_id)
     
-    # Check if user has permission to edit this notice
     if not (request.user.is_superuser or request.user.is_staff) and notice.created_by != request.user:
         messages.error(request, 'You do not have permission to edit this notice')
-        return redirect('admin_panel_view')
+        return redirect('admin_pannel_view')
     
     if request.method == 'POST':
         category = request.POST.get('category')
         title = request.POST.get('title')
         description = request.POST.get('description')
+        image = request.FILES.get('image')
+        image_clear = request.POST.get('image-clear') == 'true'
 
-        if not all([category, title, description]):
-            messages.error(request, 'All fields are required')
+        # Only validate category
+        if not category:
+            messages.error(request, 'Category is required')
             return redirect('update_notice_view', notice_id=notice_id)
 
         try:
             notice.category = category
-            notice.title = title
-            notice.description = description
+            notice.title = title if title else None
+            notice.description = description if description else None
+            
+            # Handle image
+            if image_clear:
+                notice.image.delete(save=False)
+                notice.image = None
+            elif image:
+                if notice.image:
+                    notice.image.delete(save=False)
+                notice.image = image
+            
             notice.save()
             messages.success(request, 'Notice updated successfully')
-            return redirect('admin_panel_view')
+            return redirect('admin_pannel_view')
         except Exception as e:
             messages.error(request, f'Error updating notice: {str(e)}')
             return redirect('update_notice_view', notice_id=notice_id)
@@ -265,6 +280,14 @@ def update_notice_view(request, notice_id):
     }
     return render(request, 'Controls/UploadNotice.html', context)
 
+
+
+def notice_detail_view(request, notice_id):
+    notice = get_object_or_404(Notice, id=notice_id)
+    context = {
+        'notice': notice
+    }
+    return render(request, 'Website/DetailedNotice.html', context)
 
 
 

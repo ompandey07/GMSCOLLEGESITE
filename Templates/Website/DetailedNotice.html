@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GMS NOTICES</title>
-
+    <title>Notice DEATILED VIEW</title>
     <link rel="shortcut icon" href="/static/Images/Favicon/Top.png" type="image/x-icon">
     
     <!-- Tailwind CSS -->
@@ -237,6 +236,7 @@
                     <i class="ri-phone-line text-sm"></i>
                     <span>Contact</span>
                 </a>
+
             </div>
 
             <!-- Mobile Menu Button -->
@@ -282,87 +282,69 @@
     </div>
 </div>
 
-    <!-- Notices Section -->
-    <section class="pt-28 pb-20 relative overflow-hidden border-b border-gray-800/50">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="text-center mb-12">
-                <h6 class="text-sm font-semibold gradient-text mb-4">CAMPUS NOTICES</h6>
-                <h1 class="text-4xl lg:text-5xl font-bold mb-6">Latest Notices</h1>
-                <p class="text-gray-400 max-w-2xl mx-auto">Stay informed about important announcements and updates</p>
-            </div>
-    
-            {% if notices %}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {% for notice in notices %}
-                <div class="bg-gray-900/40 border border-gray-700/50 hover:border-gray-600/50 rounded-lg shadow-lg backdrop-blur-sm hover:bg-gray-800/40 transition-all duration-300 flex flex-col">
-                    {% if notice.image %}
-                    <!-- Card with Image -->
-                    <div class="w-full">
-                        <img src="{{ notice.image.url }}" 
-                             alt="{{ notice.title }}" 
-                             class="w-full h-[200px] object-cover rounded-t-lg">
-                    </div>
-                    {% endif %}
-                    
-                    <div class="p-6 flex-1 flex flex-col">
-                        <div class="mb-4">
-                            <span class="px-3 py-1 text-xs font-semibold bg-{{ notice.get_category_color }}-500/10 text-{{ notice.get_category_color }}-400 rounded-full border border-{{ notice.get_category_color }}-500/30">
-                                {{ notice.get_category_display }}
-                            </span>
-                        </div>
-                        
-                        <h3 class="text-xl font-semibold mb-3 text-white">
-                            {% if notice.title %}
-                                {{ notice.title }}
-                            {% else %}
-                                {{ notice.get_category_display }} Notice
-                            {% endif %}
-                        </h3>
-                        
-                        <div class="mb-6">
-                            <p class="text-gray-400 text-sm line-clamp-3">
-                                {% if notice.description %}
-                                    {{ notice.description }}
-                                {% else %}
-                                    No additional details provided.
-                                {% endif %}
-                            </p>
-                        </div>
-                        
-                        <!-- Meta Info and Read More -->
-                        <div class="mt-auto">
-                            <!-- Metadata -->
-                            <div class="flex justify-between items-center pt-4 border-t border-gray-700/50 mb-4">
-                                <div class="flex items-center space-x-2">
-                                    <i class="ri-user-line text-gray-500"></i>
-                                    <span class="text-xs text-gray-400">{{ notice.created_by.get_full_name|default:notice.created_by.username }}</span>
-                                </div>
-                                <span class="text-xs text-gray-400">{{ notice.get_nepali_date }}</span>
-                            </div>
-                            
-                            <!-- Read More Button -->
-                            <a href="{% url 'notice_detail_view' notice.id %}" 
-                               class="w-full flex items-center justify-center space-x-2 py-2 px-4  hover:text-gray-700 text-gray-300 rounded-sm transition-colors group">
-                                <span>Read More</span>
-                                <i class="ri-arrow-right-line group-hover:translate-x-1 transition-transform"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}            
-            </div>
-            {% else %}
-            <!-- No Notices State -->
-            <div class="text-center py-20">
-                <div class="inline-flex justify-center items-center w-20 h-20 rounded-full bg-gray-800/50 mb-6">
-                    <i class="ri-notification-off-line text-4xl text-gray-400"></i>
-                </div>
-                <h3 class="text-xl font-semibold mb-2">No Current Notices</h3>
-                <p class="text-gray-400">There are no notices to display at the moment.</p>
+<!-- Notice Detail Section -->
+<section class="pt-28 pb-20 relative overflow-hidden">
+    <div class="max-w-4xl mx-auto px-4">
+        <!-- Back Button -->
+        <a href="{% url 'Notices_page_view' %}" class="inline-flex items-center space-x-2 text-gray-400 hover:text-white mb-8 group">
+            <i class="ri-arrow-left-line text-lg group-hover:-translate-x-1 transition-transform"></i>
+            <span>Back to Notices</span>
+        </a>
+
+        <!-- Main Content -->
+        <div class="bg-gray-900/40 border border-gray-700/50 rounded-lg shadow-lg backdrop-blur-sm overflow-hidden">
+            {% if notice.image %}
+            <!-- Image Section - Only if image exists -->
+            <div class="relative aspect-video">
+                <img src="{{ notice.image.url }}" 
+                     alt="{{ notice.title|default:'Notice Image' }}" 
+                     class="w-full h-full object-cover">
             </div>
             {% endif %}
+
+            <!-- Content Section -->
+            <div class="p-6 lg:p-8">
+                <!-- Category Badge -->
+                <div class="mb-6">
+                    <span class="px-3 py-1 text-xs font-semibold bg-{{ notice.get_category_color }}-500/10 text-{{ notice.get_category_color }}-400 rounded-full border border-{{ notice.get_category_color }}-500/30">
+                        {{ notice.get_category_display }}
+                    </span>
+                </div>
+
+                {% if notice.title or notice.description %}
+                <!-- Title & Description - Only if they exist -->
+                {% if notice.title %}
+                <h1 class="text-2xl lg:text-3xl font-bold text-white mb-6">
+                    {{ notice.title }}
+                </h1>
+                {% endif %}
+
+                {% if notice.description %}
+                <div class="prose prose-invert max-w-none mb-8">
+                    <p class="text-gray-400 mb-6">
+                        {{ notice.description|linebreaks }}
+                    </p>
+                </div>
+                {% endif %}
+                {% endif %}
+
+                <!-- Meta Information -->
+                <div class="flex items-center justify-between pt-6 border-t border-gray-700/50">
+                    <div class="flex items-center space-x-2">
+                        <i class="ri-user-line text-gray-500"></i>
+                        <span class="text-sm text-gray-400">Posted by: {{ notice.created_by.get_full_name|default:notice.created_by.username }}</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <i class="ri-time-line text-gray-500"></i>
+                        <span class="text-sm text-gray-400">{{ notice.get_nepali_date }}</span>
+                    </div>
+                </div>
+            </div>
         </div>
-    </section>
+    </div>
+</section>
+   
+
 <!-- Footer -->
 <footer class="pt-20 pb-10 relative overflow-hidden">
     <div class="max-w-7xl mx-auto px-4">
@@ -627,6 +609,7 @@
         }
     });
 </script>
+
 
 <!-- Disable Right-Click and F12 -->
 <script>

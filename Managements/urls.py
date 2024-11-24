@@ -37,6 +37,7 @@ urlpatterns = [
     path('create_notice_view/', views.create_notice_view, name='create_notice_view'),
     path('update-notice/<int:notice_id>/', views.update_notice_view, name='update_notice_view'),
     path('delete-notice/<int:notice_id>/', views.delete_notice_view, name='delete_notice_view'),
+    path('notice/<int:notice_id>/', views.notice_detail_view, name='notice_detail_view'),
 
 
 

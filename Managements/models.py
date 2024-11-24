@@ -36,9 +36,10 @@ class Notice(models.Model):
         'holiday': 'red',
     }
 
-    title = models.CharField(max_length=200 , null=True)
-    description = models.TextField(null=True)
-    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES , null=True)
+    title = models.CharField(max_length=200, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, null=False, blank=False)
+    image = models.ImageField(upload_to='Notices/', null=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -48,15 +49,13 @@ class Notice(models.Model):
         return self.CATEGORY_COLORS.get(self.category, 'gray')
     
     def get_nepali_date(self):
-        # You might want to implement proper Nepali date conversion here
-        # For now, returning a simple string format
         return self.created_at.strftime('%Y-%m-%d')
 
     class Meta:
         ordering = ['-created_at']
 
     def __str__(self):
-        return self.title
+        return self.title or f"Notice - {self.category}"
 
 
 

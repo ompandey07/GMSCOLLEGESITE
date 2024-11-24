@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POST NOICE</title>
+    <title>POST NOTICE</title>
 
     <link rel="shortcut icon" href="/static/Images/Favicon/Top.png" type="image/x-icon">
 
@@ -77,6 +77,19 @@
         .error-gradient {
             background: linear-gradient(135deg, #DC2626, #EF4444);
         }
+
+        .hover-gradient:hover {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .preview-square {
+            width: 150px;
+            height: 150px;
+            position: relative;
+            margin: 0 auto;
+            border-radius: 0.375rem;
+            overflow: hidden;
+        }
     </style>
 </head>
 
@@ -87,14 +100,10 @@
          x-show="show" 
          x-transition
          class="fixed inset-0 z-50 flex items-center justify-center">
-        <!-- Backdrop -->
         <div class="modal-backdrop absolute inset-0"></div>
-
         {% for message in messages %}
-        <!-- Modal Content -->
         <div class="modal-content relative z-10 w-96">
             <div class="{% if message.tags == 'error' %}error-gradient{% else %}success-gradient{% endif %} p-6 shadow-2xl flex items-center">
-                <!-- Icon -->
                 <div class="flex-shrink-0 mr-4">
                     {% if message.tags == 'error' %}
                     <i class="ri-error-warning-fill text-4xl text-white"></i>
@@ -102,13 +111,9 @@
                     <i class="ri-checkbox-circle-fill text-4xl text-white"></i>
                     {% endif %}
                 </div>
-
-                <!-- Message -->
                 <div class="flex-1 text-white font-medium">
                     {{ message }}
                 </div>
-
-                <!-- Close Button -->
                 <button @click="show = false" class="ml-4 text-white hover:opacity-75 transition-opacity">
                     <i class="ri-close-line text-2xl"></i>
                 </button>
@@ -129,26 +134,89 @@
 
     <!-- Upload Notice Card -->
     <div class="card max-w-md w-full p-6 rounded-sm shadow-lg text-center text-gray-300">
-        <!-- Logo -->
-        <div class="mb-6">
-            <img src="/static/Images/GMSLOGO/GMSLOGO.jpg" alt="Campus Logo" 
-            class="mx-auto w-20 h-20">
-            <h1 class="text-2xl font-bold gradient-text mt-4">
-                {% if is_update %}Update{% else %}Upload{% endif %} Notice
-            </h1>
-            <p>{% if is_update %}Update{% else %}Post{% endif %} a Notice for Ganeshman Singh Multiple Campus</p>
-        </div>
-
         <!-- Form -->
-        <form method="POST" class="space-y-6">
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
             {% csrf_token %}
+            
+            <!-- Preview Area -->
+            <div x-data="{ 
+                    hasImage: {% if notice.image %}true{% else %}false{% endif %},
+                    imageUrl: {% if notice.image %}'{{ notice.image.url }}'{% else %}''{% endif %},
+                    handleImageRemove() {
+                        this.hasImage = false;
+                        this.imageUrl = '';
+                        document.getElementById('image').value = '';
+                        document.getElementById('image-clear').value = 'true';
+                    }
+                }" 
+                class="mb-6">
+                <div class="preview-square">
+                    <!-- Default State -->
+                    <div x-show="!hasImage" 
+                         @click="document.getElementById('image').click()"
+                         class="w-full h-full border-2 border-dashed border-gray-600 hover:border-gray-500 transition-colors cursor-pointer flex flex-col items-center justify-center">
+                        <i class="ri-image-add-line text-4xl mb-2"></i>
+                        <span class="text-sm">Click to upload</span>
+                    </div>
+
+                    <!-- Image Preview -->
+                    <div x-show="hasImage" class="relative w-full h-full">
+                        <!-- Existing or New Image -->
+                        <img :src="imageUrl" 
+                             alt="Notice image"
+                             class="w-full h-full object-cover">
+                        
+                        <!-- Remove Button -->
+                        <button type="button" 
+                                @click="handleImageRemove()"
+                                class="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition-colors">
+                            <i class="ri-close-line"></i>
+                        </button>
+                        
+                        <!-- Click to Change Overlay -->
+                        <div @click="document.getElementById('image').click()"
+                             class="absolute inset-0 bg-black bg-opacity-40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <span class="text-white text-sm">
+                                <i class="ri-camera-line mr-1"></i>
+                                Change Image
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Hidden Inputs -->
+                    <input type="file" 
+                           id="image" 
+                           name="image" 
+                           accept="image/*"
+                           class="hidden"
+                           @change="const file = $event.target.files[0]; 
+                                   if(file) { 
+                                       hasImage = true;
+                                       const reader = new FileReader();
+                                       reader.onload = (e) => {
+                                           imageUrl = e.target.result;
+                                       };
+                                       reader.readAsDataURL(file);
+                                       document.getElementById('image-clear').value = 'false';
+                                   }">
+                    <input type="hidden" id="image-clear" name="image-clear" value="false">
+                </div>
+
+                <h1 class="text-2xl font-bold gradient-text mt-4">
+                    {% if is_update %}Update{% else %}Upload{% endif %} Notice
+                </h1>
+                <p class="text-gray-400">{% if is_update %}Update{% else %}Post{% endif %} a Notice for Ganeshman Singh Multiple Campus</p>
+            </div>
+
             <!-- Category -->
             <div>
                 <label for="category" class="block text-sm font-medium flex items-center gap-2">
-                    <i class="ri-file-list-line"></i> Category
+                    <i class="ri-file-list-line"></i> Category <span class="text-red-500">*</span>
                 </label>
-                <select id="category" name="category" required
-                    class="w-full px-4 py-2 mt-1 text-sm bg-gray-800 border border-gray-600 focus:border-blue-400 text-gray-300">
+                <select id="category" 
+                        name="category" 
+                        required
+                        class="w-full px-4 py-2 mt-1 text-sm bg-gray-800 border border-gray-600 focus:border-blue-400 text-gray-300 rounded-sm">
                     <option value="" disabled {% if not notice %}selected{% endif %}>Select a category</option>
                     {% for value, display in CATEGORY_CHOICES %}
                         <option value="{{ value }}" {% if notice and notice.category == value %}selected{% endif %}>
@@ -157,38 +225,39 @@
                     {% endfor %}
                 </select>
             </div>
-            
-        
+
             <!-- Title -->
             <div>
                 <label for="title" class="block text-sm font-medium flex items-center gap-2">
                     <i class="ri-pencil-line"></i> Title
                 </label>
-                <input type="text" id="title" name="title" 
-                       placeholder="Enter notice title" 
+                <input type="text" 
+                       id="title" 
+                       name="title" 
+                       placeholder="Enter notice title (optional)"
                        value="{{ notice.title|default:'' }}"
-                       required
-                       class="w-full px-4 py-2 mt-1 text-sm bg-gray-800 border border-gray-600 focus:border-blue-400 text-gray-300">
+                       class="w-full px-4 py-2 mt-1 text-sm bg-gray-800 border border-gray-600 focus:border-blue-400 text-gray-300 rounded-sm">
             </div>
-        
+
             <!-- Description -->
             <div>
                 <label for="description" class="block text-sm font-medium flex items-center gap-2">
                     <i class="ri-edit-line"></i> Description
                 </label>
-                <textarea id="description" name="description" rows="5" 
-                          placeholder="Enter notice description" 
-                          required
-                          class="w-full px-4 py-2 mt-1 text-sm bg-gray-800 border border-gray-600 focus:border-blue-400 text-gray-300">{{ notice.description|default:'' }}</textarea>
+                <textarea id="description" 
+                          name="description" 
+                          rows="5" 
+                          placeholder="Enter notice description (optional)"
+                          class="w-full px-4 py-2 mt-1 text-sm bg-gray-800 border border-gray-600 focus:border-blue-400 text-gray-300 rounded-sm resize-none">{{ notice.description|default:'' }}</textarea>
             </div>
-        
+
             <!-- Submit Button -->
             <button type="submit"
-                class="w-full py-2 text-white bg-blue-600 hover:bg-blue-700 text-sm hover-gradient">
-                {% if is_update %}Update{% else %}Upload{% endif %} Notice
+                    class="w-full py-2 text-white bg-blue-600 hover:bg-blue-700 text-sm hover-gradient transition-colors rounded-sm flex items-center justify-center gap-2">
+                <span>{% if is_update %}Update{% else %}Upload{% endif %} Notice</span>
+                <i class="ri-arrow-right-line"></i>
             </button>
         </form>
-        
     </div>
 </body>
 </html>
