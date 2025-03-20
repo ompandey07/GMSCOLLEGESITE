@@ -78,15 +78,13 @@ WSGI_APPLICATION = 'GMSCOLLEGESITE.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-import os
 import dj_database_url
 
+# Configure database using dj-database-url
+DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///db.sqlite3')
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv("DATABASE_URL")  # Fetch DB URL from environment variables
-    )
+    'default': dj_database_url.parse(DATABASE_URL)
 }
-
 
 
 
